@@ -196,7 +196,7 @@ app.get('/', (req, res) => {
                 <span class="badge badge-purple">Node.js Engine ${process.version}</span>
                 <span class="badge">Nginx & CloudPanel Managed</span>
             </div>
-            <h1>TRUNG TÂM VẬN HÀNH & QUẢN TRỊ HỆ THỐNG VPS</h1>
+            <h1>TRUNG TÂM VẬN HÀNH & QUẢN TRỊ HỆ THỐNG VIPIET</h1>
             <p class="subtitle">Bảng điều khiển Vận hành Website, Tối ưu hóa Bộ nhớ đệm & Giám sát Hiệu năng Thời gian thực</p>
         </header>
 
