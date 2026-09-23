@@ -33,9 +33,9 @@ const REDIS_URL = process.env.REDIS_URL || 'redis://:SecureRedisPassword123@127.
 // ==========================================
 const dbConfig = {
     host: process.env.DB_HOST || '127.0.0.1',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'test_index_db',
+    user: process.env.DB_USER || 'vpsuser',
+    password: process.env.DB_PASSWORD || 'SecurePass123!',
+    database: process.env.DB_NAME || 'testindexdb',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
@@ -243,14 +243,14 @@ app.get('/', (req, res) => {
                 <div>
                     <div class="card-header">
                         <div class="card-title">📊 Phân Tích Hiệu Năng Truy Vấn (Database Indexing)</div>
-                        <span class="badge badge-purple">MariaDB Engine</span>
+                        <span class="badge badge-purple">MariaDB 11.4 Engine</span>
                     </div>
                     <div class="card-desc">
                         Đánh giá kế hoạch thực thi truy vấn (Query Execution Plan) trên cơ sở dữ liệu lớn để kiểm chứng mức độ tối ưu hóa của chỉ mục B-Tree.
                     </div>
                 </div>
                 <div>
-                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
                         <button class="btn" style="background: #475569;" onclick="seedDb()">🌱 1. Sinh 50.000 Dữ Liệu</button>
                         <button class="btn btn-purple" onclick="benchmarkIndex()">🔍 2. Đo Kế Hoạch EXPLAIN</button>
                     </div>
@@ -286,9 +286,10 @@ app.get('/', (req, res) => {
                 const res = await fetch('/api/cache-test');
                 const data = await res.json();
                 const totalMs = Math.round(performance.now() - t0);
-                const isFast = totalMs < 50;
+                // Nhận biết thông minh nguồn dữ liệu
+                const isCached = data.source.includes('CACHE');
                 
-                box.innerHTML = \`<span class="tag-speed \${isFast ? 'speed-fast' : 'speed-slow'}">\${isFast ? '⚡ PHẢN HỒI SIÊU TỐC TỪ CACHE' : '🐢 TRUY VẤN NẶNG TRỰC TIẾP'}</span>\\n\` +
+                box.innerHTML = \`<span class="tag-speed \${isCached ? 'speed-fast' : 'speed-slow'}">\${isCached ? '⚡ PHẢN HỒI SIÊU TỐC TỪ CACHE' : '🐢 TRUY VẤN NẶNG TRỰC TIẾP'}</span>\\n\` +
                                 \`Nguồn dữ liệu : \${data.source}\\n\` +
                                 \`Thời gian xử lý: \${data.speed} (Độ trễ toàn trình: \${totalMs} ms)\\n\` +
                                 \`Trạng thái    : \${data.note}\\n\\n\` +
@@ -300,13 +301,14 @@ app.get('/', (req, res) => {
 
         async function seedDb() {
             const box = document.getElementById('index-result');
-            box.innerHTML = '⏳ Đang khởi tạo bảng và nạp 50.000 bản ghi dữ liệu mẫu...';
+            box.innerHTML = '⏳ Đang khởi tạo bảng và nạp 50.000 bản ghi dữ liệu mẫu... Vui lòng đợi khoảng 5-10 giây...';
             try {
                 const res = await fetch('/api/seed-db');
                 const data = await res.json();
-                box.innerHTML = JSON.stringify(data, null, 2);
+                if (data.error) throw new Error(data.error);
+                box.innerHTML = '✅ THÀNH CÔNG: ' + JSON.stringify(data, null, 2);
             } catch (err) {
-                box.innerHTML = '❌ Lỗi kết nối CSDL (Vui lòng kiểm tra mật khẩu MariaDB): ' + err.message;
+                box.innerHTML = '❌ Lỗi kết nối CSDL: ' + err.message;
             }
         }
 
@@ -316,15 +318,20 @@ app.get('/', (req, res) => {
             try {
                 const res = await fetch('/api/index-benchmark?email=user45000@example.com');
                 const data = await res.json();
+                if (data.error) throw new Error(data.error);
+                
+                const isIndexed = data.explain_analysis.key_used !== 'NONE (Full Table Scan)';
+                
                 box.innerHTML = \`🎯 KẾT QUẢ PHÂN TÍCH HIỆU NĂNG TRUY VẤN:\\n\` +
                                 \`-----------------------------------------\\n\` +
+                                \`Trạng thái Index     : \${isIndexed ? '✅ ĐÃ CÓ CHỈ MỤC INDEX' : '⚠️ CHƯA CÓ INDEX (QUÉT TOÀN BẢNG)'}\\n\` +
                                 \`Thời gian thực thi   : \${data.executionTime}\\n\` +
                                 \`Loại truy cập (type) : \${data.explain_analysis.type}\\n\` +
-                                \`Chỉ mục được kích hoạt: \${data.explain_analysis.key_used}\\n\` +
+                                \`Chỉ mục được dùng    : \${data.explain_analysis.key_used}\\n\` +
                                 \`Số dòng quét (rows)  : \${data.explain_analysis.rows_scanned} dòng\\n\\n\` +
                                 \`Dữ liệu tìm thấy: \` + JSON.stringify(data.data);
             } catch (err) {
-                box.innerHTML = '❌ Lỗi: ' + err.message;
+                box.innerHTML = '❌ Lỗi: ' + err.message + '\\n(Gợi ý: Hãy bấm nút \"1. Sinh 50.000 Dữ Liệu\" trước khi đo kế hoạch)';
             }
         }
 
@@ -333,7 +340,7 @@ app.get('/', (req, res) => {
             try {
                 const res = await fetch('/api/health');
                 const data = await res.json();
-                box.innerHTML = '✅ HTTP 200 OK | Trạng thái hệ thống: ' + JSON.stringify(data);
+                box.innerHTML = '✅ HTTP 200 OK | Trạng thái dịch vụ: ' + JSON.stringify(data);
             } catch (err) {
                 box.innerHTML = '❌ Lỗi: ' + err.message;
             }
@@ -412,16 +419,12 @@ app.get('/api/seed-db', async (req, res) => {
     if (!dbPool) return res.status(500).json({ error: 'Chưa cấu hình DB' });
     try {
         const connection = await dbPool.getConnection();
-        await connection.query(`CREATE DATABASE IF NOT EXISTS test_index_db;`);
-        await connection.query(`USE test_index_db;`);
-        await connection.query(`
-            CREATE TABLE IF NOT EXISTS users (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                email VARCHAR(100),
-                fullname VARCHAR(100),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
-        `);
+        await connection.query(`CREATE TABLE IF NOT EXISTS users (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            email VARCHAR(100),
+            fullname VARCHAR(100),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );`);
 
         const [rows] = await connection.query(`SELECT COUNT(*) as count FROM users;`);
         if (rows[0].count < 50000) {
@@ -450,7 +453,6 @@ app.get('/api/index-benchmark', async (req, res) => {
 
     try {
         const connection = await dbPool.getConnection();
-        await connection.query(`USE test_index_db;`);
 
         const [explain] = await connection.query(`EXPLAIN SELECT * FROM users WHERE email = ?`, [targetEmail]);
 
