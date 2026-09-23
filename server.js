@@ -67,7 +67,7 @@ app.get('/', (req, res) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trung Tâm Vận Hành & Quản Trị Hệ Thống VPSs</title>
+    <title>Trung Tâm Vận Hành & Quản Trị Hệ Thống VPS</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -196,7 +196,7 @@ app.get('/', (req, res) => {
                 <span class="badge badge-purple">Node.js Engine ${process.version}</span>
                 <span class="badge">Nginx & CloudPanel Managed</span>
             </div>
-            <h1>TRUNG TÂM VẬN HÀNH & QUẢN TRỊ HỆ THỐNGGGGG</h1>
+            <h1>TRUNG TÂM VẬN HÀNH & QUẢN TRỊ HỆ THỐNG VIPIET</h1>
             <p class="subtitle">Bảng điều khiển Vận hành Website, Tối ưu hóa Bộ nhớ đệm & Giám sát Hiệu năng Thời gian thực</p>
         </header>
 
