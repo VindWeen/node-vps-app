@@ -48,14 +48,13 @@ try {
 }
 
 // ==========================================
-// ENDPOINT 1: TRANG CHỦ (DASHBOARD GIAO DIỆN WEB HIỆN ĐẠI CHO GIẢNG VIÊN)
+// ENDPOINT 1: TRANG CHỦ (SYSTEM OPERATIONS DASHBOARD)
 // ==========================================
 app.get('/', (req, res) => {
-    // Nếu request yêu cầu JSON (curl hoặc postman), trả về JSON
     if (req.headers['accept'] && req.headers['accept'].includes('application/json') && !req.headers['accept'].includes('text/html')) {
         return res.json({
             status: 'online',
-            app: 'VPS Linux Node.js Production App',
+            service: 'Cloud Operations Console',
             node_version: process.version,
             uptime_seconds: Math.floor(process.uptime()),
             memory_usage_mb: (process.memoryUsage().rss / 1024 / 1024).toFixed(2),
@@ -63,21 +62,20 @@ app.get('/', (req, res) => {
         });
     }
 
-    // Trả về Giao diện Web Dashboard tương tác cực đẹp
     const html = `<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Quản Trị Website VPS & CI/CD</title>
+    <title>Trung Tâm Vận Hành & Quản Trị Hệ Thống VPS</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0b0f19;
-            --card-bg: rgba(23, 32, 54, 0.7);
+            --bg: #090d16;
+            --card-bg: rgba(19, 27, 46, 0.75);
             --border: rgba(255, 255, 255, 0.08);
-            --accent: #3b82f6;
-            --accent-glow: rgba(59, 130, 246, 0.3);
+            --accent: #2563eb;
+            --accent-glow: rgba(37, 99, 235, 0.35);
             --green: #10b981;
             --orange: #f59e0b;
             --purple: #8b5cf6;
@@ -90,29 +88,29 @@ app.get('/', (req, res) => {
             background-color: var(--bg);
             color: var(--text-main);
             min-height: 100vh;
-            padding: 30px 20px;
-            background-image: radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
-                              radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.12) 0px, transparent 50%);
+            padding: 35px 20px;
+            background-image: radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.18) 0px, transparent 50%),
+                              radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
         }
         .container { max-width: 1100px; margin: 0 auto; }
         header { text-align: center; margin-bottom: 35px; }
         .badge-list { display: flex; justify-content: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
         .badge {
-            background: rgba(59, 130, 246, 0.15);
-            border: 1px solid var(--accent);
+            background: rgba(37, 99, 235, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.4);
             color: #93c5fd;
             font-size: 0.8rem;
             font-weight: 600;
-            padding: 4px 12px;
+            padding: 5px 14px;
             border-radius: 999px;
             display: inline-flex;
             align-items: center;
             gap: 6px;
         }
-        .badge-green { background: rgba(16, 185, 129, 0.15); border-color: var(--green); color: #6ee7b7; }
-        .badge-purple { background: rgba(139, 92, 246, 0.15); border-color: var(--purple); color: #c4b5fd; }
-        h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
-        p.subtitle { color: var(--text-sub); font-size: 1rem; }
+        .badge-green { background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); color: #6ee7b7; }
+        .badge-purple { background: rgba(139, 92, 246, 0.15); border-color: rgba(139, 92, 246, 0.4); color: #c4b5fd; }
+        h1 { font-size: 2.3rem; font-weight: 800; letter-spacing: -0.6px; margin-bottom: 8px; }
+        p.subtitle { color: var(--text-sub); font-size: 1.05rem; }
         
         .grid-stats {
             display: grid;
@@ -125,9 +123,9 @@ app.get('/', (req, res) => {
             border: 1px solid var(--border);
             border-radius: 14px;
             padding: 20px;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
         }
-        .stat-label { color: var(--text-sub); font-size: 0.85rem; margin-bottom: 6px; }
+        .stat-label { color: var(--text-sub); font-size: 0.85rem; margin-bottom: 6px; font-weight: 500; }
         .stat-value { font-size: 1.5rem; font-weight: 700; color: #fff; }
 
         .cards-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr)); gap: 20px; }
@@ -138,14 +136,14 @@ app.get('/', (req, res) => {
             border: 1px solid var(--border);
             border-radius: 16px;
             padding: 24px;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
-        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
         .card-title { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-        .card-desc { color: var(--text-sub); font-size: 0.9rem; line-height: 1.5; margin-bottom: 20px; }
+        .card-desc { color: var(--text-sub); font-size: 0.92rem; line-height: 1.55; margin-bottom: 20px; }
 
         .btn {
             background: var(--accent);
@@ -166,12 +164,12 @@ app.get('/', (req, res) => {
         .btn-purple { background: var(--purple); }
 
         .result-box {
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.45);
             border: 1px solid var(--border);
             border-radius: 10px;
             padding: 15px;
             margin-top: 15px;
-            font-family: monospace;
+            font-family: 'Consolas', 'Courier New', monospace;
             font-size: 0.88rem;
             min-height: 80px;
             white-space: pre-wrap;
@@ -193,87 +191,87 @@ app.get('/', (req, res) => {
     <div class="container">
         <header>
             <div class="badge-list">
-                <span class="badge badge-green">● PM2: ONLINE</span>
-                <span class="badge">Ubuntu 22.04 LTS</span>
-                <span class="badge badge-purple">Node.js ${process.version}</span>
-                <span class="badge">CloudPanel Managed</span>
+                <span class="badge badge-green">● PM2: Cluster Active</span>
+                <span class="badge">OS: Ubuntu 22.04 LTS</span>
+                <span class="badge badge-purple">Node.js Engine ${process.version}</span>
+                <span class="badge">Nginx & CloudPanel Managed</span>
             </div>
-            <h1>BẢNG ĐIỀU KHIỂN QUẢN TRỊ VPS LINUX</h1>
-            <p class="subtitle">Đề tài: Triển khai Website & Tự Động Hóa CI/CD trên VPS (Mục tiêu 10/10 điểm)</p>
+            <h1>TRUNG TÂM VẬN HÀNH & QUẢN TRỊ HỆ THỐNG</h1>
+            <p class="subtitle">Bảng điều khiển Vận hành Website, Tối ưu hóa Bộ nhớ đệm & Giám sát Hiệu năng Thời gian thực</p>
         </header>
 
-        <!-- THÔNG SỐ SERVER -->
+        <!-- THÔNG SỐ HỆ THỐNG -->
         <div class="grid-stats">
             <div class="stat-card">
-                <div class="stat-label">Thời gian Uptime</div>
+                <div class="stat-label">Thời gian Hoạt động (Uptime)</div>
                 <div class="stat-value" id="uptime">${Math.floor(process.uptime())} giây</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Bộ nhớ RAM Ứng dụng</div>
+                <div class="stat-label">Bộ nhớ RAM Tiêu thụ</div>
                 <div class="stat-value">${(process.memoryUsage().rss / 1024 / 1024).toFixed(2)} MB</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Múi giờ Hệ thống</div>
-                <div class="stat-value">Asia/Ho_Chi_Minh (+7)</div>
+                <div class="stat-label">Khu vực Máy chủ (Region)</div>
+                <div class="stat-value">VN-ICT (GMT+7)</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Tiến trình Quản lý</div>
-                <div class="stat-value">PM2 Auto-start</div>
+                <div class="stat-label">Cơ chế Tự Phục Hồi</div>
+                <div class="stat-value" style="color: #6ee7b7;">Auto-Restart Sẵn Sàng</div>
             </div>
         </div>
 
         <div class="cards-container">
-            <!-- TIÊU CHÍ 3 & 4: TEST CACHE -->
+            <!-- TỐI ƯU CACHE -->
             <div class="action-card">
                 <div>
                     <div class="card-header">
-                        <div class="card-title">⚡ Tiêu chí 3 & 4: Tối ưu Cache (NoSQL/RAM)</div>
-                        <span class="badge badge-green">Tốc độ Siêu Tốc</span>
+                        <div class="card-title">⚡ Tối Ưu Hóa Bộ Nhớ Đệm (High-Speed Cache)</div>
+                        <span class="badge badge-green">In-Memory / Redis</span>
                     </div>
                     <div class="card-desc">
-                        Bấm nút để kiểm chứng thời gian phản hồi: Lần 1 chưa qua Cache (tốn ~1500ms), Lần 2 lấy trực tiếp từ Cache (tốc độ dưới 5ms).
+                        Cơ chế lưu trữ đệm dữ liệu trên RAM giúp giải phóng tài nguyên CPU máy chủ và giảm thời gian phản hồi từ hàng giây xuống dưới 5ms.
                     </div>
                 </div>
                 <div>
-                    <button class="btn btn-green" onclick="testCache()">🚀 Thử nghiệm Truy vấn Cache</button>
-                    <div class="result-box" id="cache-result">Nhấn nút bên trên để bắt đầu thử nghiệm đo tốc độ...</div>
+                    <button class="btn btn-green" onclick="testCache()">🚀 Kiểm Tra Độ Trễ Phản Hồi</button>
+                    <div class="result-box" id="cache-result">Nhấn nút bên trên để bắt đầu đo lường hiệu năng bộ nhớ đệm...</div>
                 </div>
             </div>
 
-            <!-- TIÊU CHÍ 5: BENCHMARK INDEX DATABASE -->
+            <!-- TỐI ƯU DATABASE INDEX -->
             <div class="action-card">
                 <div>
                     <div class="card-header">
-                        <div class="card-title">📊 Tiêu chí 5: Đánh Index Database</div>
-                        <span class="badge badge-purple">MariaDB 11.4</span>
+                        <div class="card-title">📊 Phân Tích Hiệu Năng Truy Vấn (Database Indexing)</div>
+                        <span class="badge badge-purple">MariaDB Engine</span>
                     </div>
                     <div class="card-desc">
-                        Chứng minh hiệu quả Index qua EXPLAIN: Sinh 50.000 dòng dữ liệu mẫu và so sánh số dòng quét (rows scanned).
+                        Đánh giá kế hoạch thực thi truy vấn (Query Execution Plan) trên cơ sở dữ liệu lớn để kiểm chứng mức độ tối ưu hóa của chỉ mục B-Tree.
                     </div>
                 </div>
                 <div>
                     <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                        <button class="btn" style="background: #475569;" onclick="seedDb()">🌱 1. Sinh 50.000 Dòng Data</button>
-                        <button class="btn btn-purple" onclick="benchmarkIndex()">🔍 2. Đo Tốc Độ Index</button>
+                        <button class="btn" style="background: #475569;" onclick="seedDb()">🌱 1. Sinh 50.000 Dữ Liệu</button>
+                        <button class="btn btn-purple" onclick="benchmarkIndex()">🔍 2. Đo Kế Hoạch EXPLAIN</button>
                     </div>
-                    <div class="result-box" id="index-result">Sẵn sàng đo lường truy vấn Database...</div>
+                    <div class="result-box" id="index-result">Sẵn sàng phân tích truy vấn dữ liệu...</div>
                 </div>
             </div>
 
-            <!-- TIÊU CHÍ 9: HEALTH CHECK CHO UPTIME KUMA -->
+            <!-- GIÁM SÁT HỆ THỐNG -->
             <div class="action-card" style="grid-column: 1 / -1;">
                 <div>
                     <div class="card-header">
-                        <div class="card-title">🛡️ Tiêu chí 9: Giám sát Health-Check (Uptime Kuma Endpoint)</div>
-                        <span class="badge">Monitoring Ready</span>
+                        <div class="card-title">🛡️ Cổng Giám Sát Sức Khỏe Dịch Vụ (Health Probe API)</div>
+                        <span class="badge">Uptime Kuma Ready</span>
                     </div>
                     <div class="card-desc">
-                        Endpoint <code style="color: #93c5fd;">/health</code> trả về HTTP 200 giúp hệ thống Uptime Kuma phát hiện sập web và gửi cảnh báo ngay về Telegram trong 20 giây.
+                        Cung cấp Endpoint chuẩn <code style="color: #93c5fd;">/health</code> cho các công cụ giám sát trực quan (Uptime Kuma / Netdata) phát hiện sự cố và gửi thông báo khẩn qua Telegram.
                     </div>
                 </div>
                 <div>
-                    <button class="btn" onclick="checkHealth()">🩺 Kiểm tra Sức Khỏe Web (/health)</button>
-                    <div class="result-box" id="health-result" style="min-height: 40px;">Bấm nút để kiểm tra trạng thái sức khỏe...</div>
+                    <button class="btn" onclick="checkHealth()">🩺 Kiểm Tra Trạng Thái Sức Khỏe (/health)</button>
+                    <div class="result-box" id="health-result" style="min-height: 40px;">Bấm nút để kiểm tra trạng thái dịch vụ...</div>
                 </div>
             </div>
         </div>
@@ -282,7 +280,7 @@ app.get('/', (req, res) => {
     <script>
         async function testCache() {
             const box = document.getElementById('cache-result');
-            box.innerHTML = '⏳ Đang gửi yêu cầu và đo thời gian phản hồi...';
+            box.innerHTML = '⏳ Đang gửi yêu cầu và đo lường thời gian phản hồi mạng...';
             const t0 = performance.now();
             try {
                 const res = await fetch('/api/cache-test');
@@ -290,10 +288,10 @@ app.get('/', (req, res) => {
                 const totalMs = Math.round(performance.now() - t0);
                 const isFast = totalMs < 50;
                 
-                box.innerHTML = \`<span class="tag-speed \${isFast ? 'speed-fast' : 'speed-slow'}">\${isFast ? '⚡ PHẢN HỒI SIÊU TỐC' : '🐢 TRUY VẤN NẶNG (CHẬM)'}</span>\\n\` +
+                box.innerHTML = \`<span class="tag-speed \${isFast ? 'speed-fast' : 'speed-slow'}">\${isFast ? '⚡ PHẢN HỒI SIÊU TỐC TỪ CACHE' : '🐢 TRUY VẤN NẶNG TRỰC TIẾP'}</span>\\n\` +
                                 \`Nguồn dữ liệu : \${data.source}\\n\` +
-                                \`Thời gian xử lý: \${data.speed} (Tổng thời gian mạng: \${totalMs} ms)\\n\` +
-                                \`Ghi chú       : \${data.note}\\n\\n\` +
+                                \`Thời gian xử lý: \${data.speed} (Độ trễ toàn trình: \${totalMs} ms)\\n\` +
+                                \`Trạng thái    : \${data.note}\\n\\n\` +
                                 JSON.stringify(data.data, null, 2);
             } catch (err) {
                 box.innerHTML = '❌ Lỗi: ' + err.message;
@@ -302,28 +300,28 @@ app.get('/', (req, res) => {
 
         async function seedDb() {
             const box = document.getElementById('index-result');
-            box.innerHTML = '⏳ Đang khởi tạo bảng và chèn 50.000 records mẫu vào MariaDB...';
+            box.innerHTML = '⏳ Đang khởi tạo bảng và nạp 50.000 bản ghi dữ liệu mẫu...';
             try {
                 const res = await fetch('/api/seed-db');
                 const data = await res.json();
                 box.innerHTML = JSON.stringify(data, null, 2);
             } catch (err) {
-                box.innerHTML = '❌ Lỗi kết nối DB (Hãy kiểm tra MySQL root password trong file .env): ' + err.message;
+                box.innerHTML = '❌ Lỗi kết nối CSDL (Vui lòng kiểm tra mật khẩu MariaDB): ' + err.message;
             }
         }
 
         async function benchmarkIndex() {
             const box = document.getElementById('index-result');
-            box.innerHTML = '⏳ Đang chạy lệnh EXPLAIN SELECT trên bảng 50.000 dòng...';
+            box.innerHTML = '⏳ Đang phân tích kế hoạch thực thi EXPLAIN SELECT...';
             try {
                 const res = await fetch('/api/index-benchmark?email=user45000@example.com');
                 const data = await res.json();
-                box.innerHTML = \`🎯 KẾT QUẢ PHÂN TÍCH EXPLAIN TRUY VẤN:\\n\` +
-                                \`----------------------------------------\\n\` +
-                                \`Thời gian thực thi : \${data.executionTime}\\n\` +
-                                \`Loại truy vấn (type): \${data.explain_analysis.type}\\n\` +
-                                \`Chỉ mục được dùng   : \${data.explain_analysis.key_used}\\n\` +
-                                \`Số dòng quét (rows) : \${data.explain_analysis.rows_scanned} dòng\\n\\n\` +
+                box.innerHTML = \`🎯 KẾT QUẢ PHÂN TÍCH HIỆU NĂNG TRUY VẤN:\\n\` +
+                                \`-----------------------------------------\\n\` +
+                                \`Thời gian thực thi   : \${data.executionTime}\\n\` +
+                                \`Loại truy cập (type) : \${data.explain_analysis.type}\\n\` +
+                                \`Chỉ mục được kích hoạt: \${data.explain_analysis.key_used}\\n\` +
+                                \`Số dòng quét (rows)  : \${data.explain_analysis.rows_scanned} dòng\\n\\n\` +
                                 \`Dữ liệu tìm thấy: \` + JSON.stringify(data.data);
             } catch (err) {
                 box.innerHTML = '❌ Lỗi: ' + err.message;
@@ -335,7 +333,7 @@ app.get('/', (req, res) => {
             try {
                 const res = await fetch('/api/health');
                 const data = await res.json();
-                box.innerHTML = '✅ HTTP 200 OK | ' + JSON.stringify(data);
+                box.innerHTML = '✅ HTTP 200 OK | Trạng thái hệ thống: ' + JSON.stringify(data);
             } catch (err) {
                 box.innerHTML = '❌ Lỗi: ' + err.message;
             }
