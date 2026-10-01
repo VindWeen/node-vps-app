@@ -544,15 +544,15 @@ app.get('/', (req, res) => {
         }
 
         .terminal-body {
-            padding: 12px 14px;
-            height: 200px;
-            max-height: 200px;
-            overflow-y: auto;
+            padding: 14px 16px;
+            min-height: 300px;
+            height: auto;
+            overflow-y: visible;
             white-space: pre-wrap;
             word-break: break-all;
             color: #cbd5e1;
-            line-height: 1.55;
-            font-size: 0.78rem;
+            line-height: 1.6;
+            font-size: 0.8rem;
         }
 
         .terminal-body::-webkit-scrollbar {
@@ -666,7 +666,6 @@ app.get('/', (req, res) => {
             <div class="metric-card">
                 <div class="metric-header">
                     <span class="metric-label">Thời gian Hoạt động (Uptime)</span>
-                    <span class="metric-icon">⏱️</span>
                 </div>
                 <div class="metric-value" id="uptime-display">${vps.uptimeDisplay}</div>
                 <div class="metric-footer">
@@ -677,18 +676,16 @@ app.get('/', (req, res) => {
             <div class="metric-card">
                 <div class="metric-header">
                     <span class="metric-label">Bộ nhớ RAM Toàn VPS</span>
-                    <span class="metric-icon">🧠</span>
                 </div>
                 <div class="metric-value">${vps.usedRamGb} / ${vps.totalRamGb} <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-muted);">GB (${vps.ramPercent}%)</span></div>
                 <div class="metric-footer">
-                    <span style="color: #38bdf8;">🛡️ ${vps.swapDisplay}</span>
+                    <span style="color: #38bdf8;">SWAP: ${vps.swapDisplay}</span>
                 </div>
             </div>
 
             <div class="metric-card">
                 <div class="metric-header">
                     <span class="metric-label">Dung Lượng Ổ Cứng (SSD)</span>
-                    <span class="metric-icon">💾</span>
                 </div>
                 <div class="metric-value" style="font-size: 1.45rem;">${vps.diskDisplay}</div>
                 <div class="metric-footer">
@@ -699,7 +696,6 @@ app.get('/', (req, res) => {
             <div class="metric-card">
                 <div class="metric-header">
                     <span class="metric-label">Mạng & Nhân Linux</span>
-                    <span class="metric-icon">⚡</span>
                 </div>
                 <div class="metric-value" style="color: #6ee7b7; font-size: 1.35rem;">Google TCP BBR</div>
                 <div class="metric-footer">
