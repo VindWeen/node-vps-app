@@ -342,7 +342,7 @@ app.get('/', (req, res) => {
             backdrop-filter: blur(12px);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: flex-start;
             transition: all 0.25s ease;
         }
 
@@ -357,7 +357,8 @@ app.get('/', (req, res) => {
         }
 
         .panel-top {
-            margin-bottom: 16px;
+            margin-bottom: 14px;
+            min-height: 94px;
         }
 
         .panel-header {
@@ -382,14 +383,14 @@ app.get('/', (req, res) => {
             color: var(--text-secondary);
             font-size: 0.84rem;
             line-height: 1.55;
-            min-height: 52px;
         }
 
         /* BUTTONS & CONTROLS */
         .button-group {
             display: flex;
             gap: 8px;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
+            min-height: 38px;
             align-items: center;
         }
 
@@ -492,6 +493,9 @@ app.get('/', (req, res) => {
             overflow: hidden;
             font-family: 'JetBrains Mono', 'Consolas', monospace;
             font-size: 0.84rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .terminal-header {
@@ -545,8 +549,8 @@ app.get('/', (req, res) => {
 
         .terminal-body {
             padding: 14px 16px;
-            min-height: 300px;
-            height: auto;
+            min-height: 280px;
+            flex: 1;
             overflow-y: visible;
             white-space: pre-wrap;
             word-break: break-all;
@@ -717,26 +721,24 @@ app.get('/', (req, res) => {
                         Cơ chế lưu đệm RAM giải phóng tài nguyên CPU máy chủ và giảm thời gian phản hồi API xuống dưới 5ms.
                     </p>
                 </div>
-                <div>
-                    <div class="button-group">
-                        <button class="btn btn-success" id="btn-cache" onclick="testCache()" style="width: 100%;">
-                            Kiểm Tra Độ Trễ Phản Hồi
-                        </button>
-                    </div>
-                    <div class="terminal-box">
-                        <div class="terminal-header">
-                            <div class="terminal-dots">
-                                <span class="terminal-dot dot-red"></span>
-                                <span class="terminal-dot dot-yellow"></span>
-                                <span class="terminal-dot dot-green"></span>
-                            </div>
-                            <span class="terminal-title">cache-benchmark.log</span>
-                            <div class="terminal-actions">
-                                <button class="btn-terminal-mini" onclick="clearBox('cache-result')">Clear</button>
-                            </div>
+                <div class="button-group">
+                    <button class="btn btn-success" id="btn-cache" onclick="testCache()" style="width: 100%;">
+                        Kiểm Tra Độ Trễ Phản Hồi
+                    </button>
+                </div>
+                <div class="terminal-box">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span class="terminal-dot dot-red"></span>
+                            <span class="terminal-dot dot-yellow"></span>
+                            <span class="terminal-dot dot-green"></span>
                         </div>
-                        <div class="terminal-body" id="cache-result">Nhấn nút bên trên để bắt đầu đo lường hiệu năng bộ nhớ đệm...</div>
+                        <span class="terminal-title">cache-benchmark.log</span>
+                        <div class="terminal-actions">
+                            <button class="btn-terminal-mini" onclick="clearBox('cache-result')">Clear</button>
+                        </div>
                     </div>
+                    <div class="terminal-body" id="cache-result">Nhấn nút bên trên để bắt đầu đo lường hiệu năng bộ nhớ đệm...</div>
                 </div>
             </div>
 
@@ -751,29 +753,27 @@ app.get('/', (req, res) => {
                         Đánh giá kế hoạch thực thi EXPLAIN trên 50.000 bản ghi để kiểm chứng sự vượt trội của chỉ mục B-Tree.
                     </p>
                 </div>
-                <div>
-                    <div class="button-group">
-                        <button class="btn" id="btn-seed" onclick="seedDb()" style="flex: 1;">
-                            1. Sinh 50k Dữ Liệu
-                        </button>
-                        <button class="btn btn-purple" id="btn-benchmark" onclick="benchmarkIndex()" style="flex: 1;">
-                            2. Đo Kế Hoạch EXPLAIN
-                        </button>
-                    </div>
-                    <div class="terminal-box">
-                        <div class="terminal-header">
-                            <div class="terminal-dots">
-                                <span class="terminal-dot dot-red"></span>
-                                <span class="terminal-dot dot-yellow"></span>
-                                <span class="terminal-dot dot-green"></span>
-                            </div>
-                            <span class="terminal-title">explain-query-plan.log</span>
-                            <div class="terminal-actions">
-                                <button class="btn-terminal-mini" onclick="clearBox('index-result')">Clear</button>
-                            </div>
+                <div class="button-group">
+                    <button class="btn" id="btn-seed" onclick="seedDb()" style="flex: 1;">
+                        1. Sinh 50k Dữ Liệu
+                    </button>
+                    <button class="btn btn-purple" id="btn-benchmark" onclick="benchmarkIndex()" style="flex: 1;">
+                        2. Đo Kế Hoạch EXPLAIN
+                    </button>
+                </div>
+                <div class="terminal-box">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span class="terminal-dot dot-red"></span>
+                            <span class="terminal-dot dot-yellow"></span>
+                            <span class="terminal-dot dot-green"></span>
                         </div>
-                        <div class="terminal-body" id="index-result">Sẵn sàng phân tích truy vấn dữ liệu...</div>
+                        <span class="terminal-title">explain-query-plan.log</span>
+                        <div class="terminal-actions">
+                            <button class="btn-terminal-mini" onclick="clearBox('index-result')">Clear</button>
+                        </div>
                     </div>
+                    <div class="terminal-body" id="index-result">Sẵn sàng phân tích truy vấn dữ liệu...</div>
                 </div>
             </div>
 
@@ -788,29 +788,27 @@ app.get('/', (req, res) => {
                         Ping tự động kiểm tra trạng thái HTTP 3 website vệ tinh và cổng Node.js, biên soạn và gửi báo cáo về Telegram Bot.
                     </p>
                 </div>
-                <div>
-                    <div class="button-group">
-                        <button class="btn btn-success" id="btn-health-sites" onclick="checkAllSitesAndNotify()" style="flex: 1.2;">
-                            Quét 3 Site & Gửi Báo Cáo
-                        </button>
-                        <button class="btn" id="btn-health-internal" onclick="checkHealth()" style="flex: 0.8;">
-                            Cổng /health
-                        </button>
-                    </div>
-                    <div class="terminal-box">
-                        <div class="terminal-header">
-                            <div class="terminal-dots">
-                                <span class="terminal-dot dot-red"></span>
-                                <span class="terminal-dot dot-yellow"></span>
-                                <span class="terminal-dot dot-green"></span>
-                            </div>
-                            <span class="terminal-title">site-health-monitor.log</span>
-                            <div class="terminal-actions">
-                                <button class="btn-terminal-mini" onclick="clearBox('health-result')">Clear</button>
-                            </div>
+                <div class="button-group">
+                    <button class="btn btn-success" id="btn-health-sites" onclick="checkAllSitesAndNotify()" style="flex: 1.2;">
+                        Quét 3 Site & Gửi Báo Cáo
+                    </button>
+                    <button class="btn" id="btn-health-internal" onclick="checkHealth()" style="flex: 0.8;">
+                        Cổng /health
+                    </button>
+                </div>
+                <div class="terminal-box">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span class="terminal-dot dot-red"></span>
+                            <span class="terminal-dot dot-yellow"></span>
+                            <span class="terminal-dot dot-green"></span>
                         </div>
-                        <div class="terminal-body" id="health-result">Nhấn nút bên trên để kiểm tra và nhận bản tin trực tiếp qua Telegram...</div>
+                        <span class="terminal-title">site-health-monitor.log</span>
+                        <div class="terminal-actions">
+                            <button class="btn-terminal-mini" onclick="clearBox('health-result')">Clear</button>
+                        </div>
                     </div>
+                    <div class="terminal-body" id="health-result">Nhấn nút bên trên để kiểm tra và nhận bản tin trực tiếp qua Telegram...</div>
                 </div>
             </div>
         </div>
