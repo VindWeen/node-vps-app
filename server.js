@@ -572,7 +572,7 @@ app.get('/', (req, res) => {
                 <span class="chip">Nginx & CloudPanel Managed</span>
             </div>
             <h1 class="dashboard-title">TRUNG TÂM VẬN HÀNH & QUẢN TRỊ HỆ THỐNG VPS</h1>
-            <p class="dashboard-subtitle">Bảng điều khiển Vận hành Website, Tối ưu hóa Bộ nhớ đệm & Giám sát Tự động hóa CI/CD Thời gian thực</p>
+            <p class="dashboard-subtitle">Bảng điều khiển Vận hành Website, Tối ưu hóa Bộ nhớ đệm & Giám sát Hiệu năng Thời gian thực</p>
         </header>
 
         <!-- STATS COUNTER BAR -->
@@ -728,66 +728,6 @@ app.get('/', (req, res) => {
                             </div>
                         </div>
                         <div class="terminal-body" id="health-result">Bấm nút "Quét Sức Khỏe 3 Site & Gửi Báo Cáo Telegram" để bắt đầu kiểm tra và nhận bản tin trực tiếp qua Telegram...</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TỰ ĐỘNG HÓA CI/CD & AUTO-ROLLBACK (GITHUB WEBHOOK) -->
-            <div class="panel-card full-width">
-                <div class="panel-top">
-                    <div class="panel-header">
-                        <div class="panel-title">🔄 Tự Động Hóa CI/CD Pipeline & Auto-Rollback (GitHub Webhook)</div>
-                        <span class="chip chip-purple">GitHub Webhooks Ready</span>
-                    </div>
-                    <p class="panel-desc">
-                        Tích hợp GitHub Webhook để VPS tự động nhận tín hiệu Push từ GitHub repository, kéo code mới nhất, build kiểm thử và khởi động lại dịch vụ không gián đoạn. Đặc biệt, hệ thống tích hợp <b>cơ chế Auto-Rollback tự động khôi phục về phiên bản cũ ngay lập tức</b> nếu phát hiện lỗi build, đồng thời phát cảnh báo qua Telegram Bot.
-                    </p>
-                </div>
-                <div>
-                    <div class="webhook-card">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="color: var(--text-secondary); font-size: 0.88rem; font-weight: 600;">🔗 URL GitHub Webhook Endpoint:</span>
-                            <span class="chip chip-green" style="font-size: 0.72rem;">POST Active</span>
-                        </div>
-                        <div class="webhook-row">
-                            <div class="webhook-code" id="webhook-url">https://quangnode.sixforce.io.vn/api/github-webhook</div>
-                            <button class="btn" style="padding: 8px 14px; font-size: 0.82rem;" onclick="copyWebhook()">📋 Copy URL</button>
-                        </div>
-                        <div style="color: var(--text-muted); font-size: 0.78rem; margin-top: 8px;">
-                            ⚙️ Thiết lập trên GitHub: <i>Settings ➔ Webhooks ➔ Add webhook ➔ Payload URL (dán link trên) ➔ Content type: <b>application/json</b> ➔ Event: <b>Just the push event</b></i>.
-                        </div>
-                    </div>
-
-                    <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap;">
-                        <label style="color: var(--text-secondary); font-size: 0.88rem; font-weight: 600;">Chọn dự án:</label>
-                        <select id="deploy-target" class="custom-select">
-                            <option value="node">1. node-vps-app (quangnode.sixforce.io.vn)</option>
-                            <option value="studynode">2. StudyNotion-NextJS (quangstudynode.sixforce.io.vn)</option>
-                            <option value="php">3. PHP E-Commerce (quangphp.sixforce.io.vn)</option>
-                            <option value="html">4. HTML Landing Page (quanghtml.sixforce.io.vn)</option>
-                        </select>
-                        <button class="btn btn-success" id="btn-deploy-ok" onclick="triggerDeploy(false)">
-                            <span>🚀</span> 1. Test Kích Hoạt Deploy (Thành Công)
-                        </button>
-                        <button class="btn btn-danger" id="btn-deploy-err" onclick="triggerDeploy(true)">
-                            <span>⚠️</span> 2. Test Cơ Chế Auto-Rollback (Giả Lập Lỗi)
-                        </button>
-                    </div>
-
-                    <div class="terminal-box">
-                        <div class="terminal-header">
-                            <div class="terminal-dots">
-                                <span class="terminal-dot dot-red"></span>
-                                <span class="terminal-dot dot-yellow"></span>
-                                <span class="terminal-dot dot-green"></span>
-                            </div>
-                            <span class="terminal-title">bash - deploy_site.sh</span>
-                            <div class="terminal-actions">
-                                <button class="btn-terminal-mini" onclick="copyBoxText('deploy-result')">Copy Log</button>
-                                <button class="btn-terminal-mini" onclick="clearBox('deploy-result')">Clear</button>
-                            </div>
-                        </div>
-                        <div class="terminal-body" id="deploy-result">Chọn dự án và bấm nút bên trên để kích hoạt luồng CI/CD hoặc kiểm chứng cơ chế Rollback tự động...</div>
                     </div>
                 </div>
             </div>
@@ -977,46 +917,6 @@ app.get('/', (req, res) => {
                 showToast('🩺 Cổng nội bộ /health hoạt động tốt!');
             } catch (err) {
                 box.innerHTML = '❌ Lỗi: ' + err.message;
-            }
-        }
-
-        async function triggerDeploy(simulateError) {
-            const box = document.getElementById('deploy-result');
-            const sel = document.getElementById('deploy-target');
-            const target = sel.value;
-            const targetName = sel.options[sel.selectedIndex].text;
-            const activeBtn = simulateError ? 'btn-deploy-err' : 'btn-deploy-ok';
-            
-            setButtonLoading(activeBtn, true);
-            const promptLines = [
-                '⏳ [ĐANG THỰC THI CI/CD]: Kích hoạt tiến trình cho ' + targetName + '...',
-                (simulateError ? '⚠️ Chế độ: GIẢ LẬP LỖI BUILD ĐỂ KIỂM CHỨNG AUTO-ROLLBACK...' : '🚀 Chế độ: DEPLOY MÃ NGUỒN MỚI TỪ GITHUB...'),
-                'Vui lòng đợi giây lát (khoảng 3-10 giây)...'
-            ];
-            box.innerHTML = promptLines.join(NL);
-
-            try {
-                const res = await fetch('/api/trigger-deploy', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ project: target, simulate_error: simulateError })
-                });
-                const data = await res.json();
-                
-                const statusBadge = data.success ? '✅ DEPLOY THÀNH CÔNG RỰC RỠ' : '🛡️ AUTO-ROLLBACK ĐÃ KÍCH HOẠT THÀNH CÔNG';
-                const resLines = [
-                    '📌 TRẠNG THÁI: ' + statusBadge,
-                    '⏱️ Thời gian xử lý: ' + data.durationMs + ' ms | Mã thoát (Exit code): ' + data.exitCode,
-                    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-                    '📜 CHI TIẾT NHẬT KÝ THỰC THI (TERMINAL LOG):',
-                    (data.output || '')
-                ];
-                box.innerHTML = resLines.join(NL);
-                showToast(data.success ? '🚀 Deploy thành công!' : '🛡️ Đã tự động Rollback an toàn!');
-            } catch (err) {
-                box.innerHTML = '❌ Lỗi kết nối: ' + err.message;
-            } finally {
-                setButtonLoading(activeBtn, false);
             }
         }
     </script>
