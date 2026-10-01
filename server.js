@@ -427,9 +427,13 @@ app.get('/', (req, res) => {
             var target = sel.value;
             var targetName = sel.options[sel.selectedIndex].text;
             
-            box.innerHTML = '⏳ [ĐANG THỰC THI CI/CD]: Đang kích hoạt tiến trình triển khai cho ' + targetName + '...\n' +
-                            (simulateError ? '⚠️ Chế độ: GIẢ LẬP LỖI BUILD ĐỂ KIỂM CHỨNG AUTO-ROLLBACK...\n' : '🚀 Chế độ: DEPLOY MÃ NGUỒN MỚI TỪ GITHUB...\n') +
-                            'Vui lòng đợi giây lát (khoảng 3-10 giây)...';
+            var promptLines = [
+                '⏳ [ĐANG THỰC THI CI/CD]: Đang kích hoạt tiến trình triển khai cho ' + targetName + '...',
+                (simulateError ? '⚠️ Chế độ: GIẢ LẬP LỖI BUILD ĐỂ KIỂM CHỨNG AUTO-ROLLBACK...' : '🚀 Chế độ: DEPLOY MÃ NGUỒN MỚI TỪ GITHUB...'),
+                'Vui lòng đợi giây lát (khoảng 3-10 giây)...'
+            ];
+            box.innerHTML = promptLines.join(String.fromCharCode(10));
+
             try {
                 var res = await fetch('/api/trigger-deploy', {
                     method: 'POST',
@@ -439,11 +443,14 @@ app.get('/', (req, res) => {
                 var data = await res.json();
                 
                 var statusBadge = data.success ? '✅ DEPLOY THÀNH CÔNG RỰC RỠ' : '🛡️ AUTO-ROLLBACK ĐÃ KÍCH HOẠT THÀNH CÔNG';
-                box.innerHTML = '📌 TRẠNG THÁI: ' + statusBadge + '\n' +
-                                '⏱️ Thời gian xử lý: ' + data.durationMs + ' ms | Mã thoát (Exit code): ' + data.exitCode + '\n' +
-                                '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
-                                '📜 CHI TIẾT NHẬT KÝ THỰC THI (TERMINAL LOG):\n' +
-                                (data.output || '');
+                var resLines = [
+                    '📌 TRẠNG THÁI: ' + statusBadge,
+                    '⏱️ Thời gian xử lý: ' + data.durationMs + ' ms | Mã thoát (Exit code): ' + data.exitCode,
+                    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+                    '📜 CHI TIẾT NHẬT KÝ THỰC THI (TERMINAL LOG):',
+                    (data.output || '')
+                ];
+                box.innerHTML = resLines.join(String.fromCharCode(10));
             } catch (err) {
                 box.innerHTML = '❌ Lỗi kết nối: ' + err.message;
             }
