@@ -798,6 +798,8 @@ app.get('/', (req, res) => {
     <div id="toast"><span>Notification</span></div>
 
     <script>
+        const NL = String.fromCharCode(10);
+
         // Ticking uptime in real-time
         let currentUptime = ${Math.floor(process.uptime())};
         setInterval(() => {
@@ -867,12 +869,16 @@ app.get('/', (req, res) => {
                 const totalMs = Math.round(performance.now() - t0);
                 const isCached = data.source && data.source.includes('CACHE');
                 
-                box.innerHTML = '<span class="tag-pill ' + (isCached ? 'tag-pill-fast' : 'tag-pill-slow') + '">' +
-                                (isCached ? '⚡ PHẢN HỒI SIÊU TỐC TỪ CACHE' : '🐢 TRUY VẤN NẶNG TRỰC TIẾP') + '</span>\n' +
-                                'Nguồn dữ liệu  : ' + data.source + '\n' +
-                                'Thời gian xử lý: ' + data.speed + ' (Độ trễ toàn trình: ' + totalMs + ' ms)\n' +
-                                'Trạng thái     : ' + data.note + '\n\n' +
-                                JSON.stringify(data.data, null, 2);
+                const lines = [
+                    '<span class="tag-pill ' + (isCached ? 'tag-pill-fast' : 'tag-pill-slow') + '">' +
+                    (isCached ? '⚡ PHẢN HỒI SIÊU TỐC TỪ CACHE' : '🐢 TRUY VẤN NẶNG TRỰC TIẾP') + '</span>',
+                    'Nguồn dữ liệu  : ' + data.source,
+                    'Thời gian xử lý: ' + data.speed + ' (Độ trễ toàn trình: ' + totalMs + ' ms)',
+                    'Trạng thái     : ' + data.note,
+                    '',
+                    JSON.stringify(data.data, null, 2)
+                ];
+                box.innerHTML = lines.join(NL);
                 showToast('⚡ Hoàn thành đo cache (' + totalMs + 'ms)');
             } catch (err) {
                 box.innerHTML = '❌ Lỗi: ' + err.message;
@@ -909,17 +915,21 @@ app.get('/', (req, res) => {
                 
                 const isIndexed = data.explain_analysis.key_used !== 'NONE (Full Table Scan)';
                 
-                box.innerHTML = '🎯 KẾT QUẢ PHÂN TÍCH HIỆU NĂNG TRUY VẤN:\n' +
-                                '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
-                                'Trạng thái Index     : ' + (isIndexed ? '✅ ĐÃ CÓ CHỈ MỤC INDEX' : '⚠️ CHƯA CÓ INDEX (QUÉT TOÀN BẢNG)') + '\n' +
-                                'Thời gian thực thi   : ' + data.executionTime + '\n' +
-                                'Loại truy cập (type) : ' + data.explain_analysis.type + '\n' +
-                                'Chỉ mục được dùng    : ' + data.explain_analysis.key_used + '\n' +
-                                'Số dòng quét (rows)  : ' + data.explain_analysis.rows_scanned + ' dòng\n\n' +
-                                'Dữ liệu tìm thấy: ' + JSON.stringify(data.data, null, 2);
+                const lines = [
+                    '🎯 KẾT QUẢ PHÂN TÍCH HIỆU NĂNG TRUY VẤN:',
+                    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+                    'Trạng thái Index     : ' + (isIndexed ? '✅ ĐÃ CÓ CHỈ MỤC INDEX' : '⚠️ CHƯA CÓ INDEX (QUÉT TOÀN BẢNG)'),
+                    'Thời gian thực thi   : ' + data.executionTime,
+                    'Loại truy cập (type) : ' + data.explain_analysis.type,
+                    'Chỉ mục được dùng    : ' + data.explain_analysis.key_used,
+                    'Số dòng quét (rows)  : ' + data.explain_analysis.rows_scanned + ' dòng',
+                    '',
+                    'Dữ liệu tìm thấy: ' + JSON.stringify(data.data, null, 2)
+                ];
+                box.innerHTML = lines.join(NL);
                 showToast('🔍 Đã phân tích xong EXPLAIN!');
             } catch (err) {
-                box.innerHTML = '❌ Lỗi: ' + err.message + '\n(Gợi ý: Hãy bấm nút "1. Sinh 50.000 Dữ Liệu" trước khi đo)';
+                box.innerHTML = '❌ Lỗi: ' + err.message + NL + '(Gợi ý: Hãy bấm nút "1. Sinh 50.000 Dữ Liệu" trước khi đo)';
             } finally {
                 setButtonLoading('btn-benchmark', false);
             }
@@ -950,7 +960,7 @@ app.get('/', (req, res) => {
                 } else {
                     lines.push("⚠️ [TELEGRAM]: Không gửi được tin nhắn (kiểm tra token/chat_id trong .env).");
                 }
-                box.innerHTML = lines.join('\n');
+                box.innerHTML = lines.join(NL);
             } catch (err) {
                 box.innerHTML = "❌ Lỗi khi quét dịch vụ: " + err.message;
             } finally {
@@ -963,7 +973,7 @@ app.get('/', (req, res) => {
             try {
                 const res = await fetch('/health');
                 const data = await res.json();
-                box.innerHTML = '✅ HTTP 200 OK | Trạng thái dịch vụ:\n' + JSON.stringify(data, null, 2);
+                box.innerHTML = '✅ HTTP 200 OK | Trạng thái dịch vụ:' + NL + JSON.stringify(data, null, 2);
                 showToast('🩺 Cổng nội bộ /health hoạt động tốt!');
             } catch (err) {
                 box.innerHTML = '❌ Lỗi: ' + err.message;
@@ -978,9 +988,13 @@ app.get('/', (req, res) => {
             const activeBtn = simulateError ? 'btn-deploy-err' : 'btn-deploy-ok';
             
             setButtonLoading(activeBtn, true);
-            box.innerHTML = '⏳ [ĐANG THỰC THI CI/CD]: Kích hoạt tiến trình cho ' + targetName + '...\n' +
-                            (simulateError ? '⚠️ Chế độ: GIẢ LẬP LỖI BUILD ĐỂ KIỂM CHỨNG AUTO-ROLLBACK...\n' : '🚀 Chế độ: DEPLOY MÃ NGUỒN MỚI TỪ GITHUB...\n') +
-                            'Vui lòng đợi giây lát (khoảng 3-10 giây)...';
+            const promptLines = [
+                '⏳ [ĐANG THỰC THI CI/CD]: Kích hoạt tiến trình cho ' + targetName + '...',
+                (simulateError ? '⚠️ Chế độ: GIẢ LẬP LỖI BUILD ĐỂ KIỂM CHỨNG AUTO-ROLLBACK...' : '🚀 Chế độ: DEPLOY MÃ NGUỒN MỚI TỪ GITHUB...'),
+                'Vui lòng đợi giây lát (khoảng 3-10 giây)...'
+            ];
+            box.innerHTML = promptLines.join(NL);
+
             try {
                 const res = await fetch('/api/trigger-deploy', {
                     method: 'POST',
@@ -990,11 +1004,14 @@ app.get('/', (req, res) => {
                 const data = await res.json();
                 
                 const statusBadge = data.success ? '✅ DEPLOY THÀNH CÔNG RỰC RỠ' : '🛡️ AUTO-ROLLBACK ĐÃ KÍCH HOẠT THÀNH CÔNG';
-                box.innerHTML = '📌 TRẠNG THÁI: ' + statusBadge + '\n' +
-                                '⏱️ Thời gian xử lý: ' + data.durationMs + ' ms | Mã thoát (Exit code): ' + data.exitCode + '\n' +
-                                '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
-                                '📜 CHI TIẾT NHẬT KÝ THỰC THI (TERMINAL LOG):\n' +
-                                (data.output || '');
+                const resLines = [
+                    '📌 TRẠNG THÁI: ' + statusBadge,
+                    '⏱️ Thời gian xử lý: ' + data.durationMs + ' ms | Mã thoát (Exit code): ' + data.exitCode,
+                    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+                    '📜 CHI TIẾT NHẬT KÝ THỰC THI (TERMINAL LOG):',
+                    (data.output || '')
+                ];
+                box.innerHTML = resLines.join(NL);
                 showToast(data.success ? '🚀 Deploy thành công!' : '🛡️ Đã tự động Rollback an toàn!');
             } catch (err) {
                 box.innerHTML = '❌ Lỗi kết nối: ' + err.message;
