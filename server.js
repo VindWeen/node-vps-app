@@ -322,32 +322,34 @@ app.get('/', (req, res) => {
             gap: 5px;
         }
 
-        /* SECTION TILES */
+        /* SECTION TILES (3 COLUMNS) */
         .section-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 1040px) {
             .section-grid { grid-template-columns: 1fr; }
         }
 
         .panel-card {
             background: var(--surface-card);
             border: 1px solid var(--border-subtle);
-            border-radius: 16px;
-            padding: 24px;
+            border-radius: 14px;
+            padding: 22px;
             backdrop-filter: blur(12px);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: border-color 0.2s;
+            transition: all 0.25s ease;
         }
 
         .panel-card:hover {
             border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
         }
 
         .panel-card.full-width {
@@ -355,7 +357,7 @@ app.get('/', (req, res) => {
         }
 
         .panel-top {
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
 
         .panel-header {
@@ -363,46 +365,51 @@ app.get('/', (req, res) => {
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
+            gap: 8px;
         }
 
         .panel-title {
-            font-size: 1.12rem;
+            font-size: 1.05rem;
             font-weight: 700;
             display: flex;
             align-items: center;
             gap: 8px;
             color: #fff;
+            letter-spacing: -0.01em;
         }
 
         .panel-desc {
             color: var(--text-secondary);
-            font-size: 0.88rem;
+            font-size: 0.84rem;
             line-height: 1.55;
+            min-height: 52px;
         }
 
         /* BUTTONS & CONTROLS */
         .button-group {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 14px;
+            gap: 8px;
+            margin-bottom: 12px;
+            align-items: center;
         }
 
         .btn {
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.05);
             color: var(--text-primary);
             border: 1px solid var(--border-subtle);
-            padding: 9px 16px;
+            padding: 8px 14px;
             border-radius: 8px;
             font-weight: 600;
-            font-size: 0.88rem;
+            font-size: 0.82rem;
             font-family: inherit;
             cursor: pointer;
             transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
-            gap: 7px;
+            justify-content: center;
+            gap: 6px;
             user-select: none;
+            text-align: center;
         }
 
         .btn:hover:not(:disabled) {
@@ -418,6 +425,19 @@ app.get('/', (req, res) => {
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         .btn-primary {
@@ -524,14 +544,15 @@ app.get('/', (req, res) => {
         }
 
         .terminal-body {
-            padding: 14px;
-            min-height: 88px;
-            max-height: 280px;
+            padding: 12px 14px;
+            height: 200px;
+            max-height: 200px;
             overflow-y: auto;
             white-space: pre-wrap;
             word-break: break-all;
             color: #cbd5e1;
             line-height: 1.55;
+            font-size: 0.78rem;
         }
 
         .terminal-body::-webkit-scrollbar {
@@ -693,17 +714,17 @@ app.get('/', (req, res) => {
             <div class="panel-card">
                 <div class="panel-top">
                     <div class="panel-header">
-                        <div class="panel-title">⚡ Tối Ưu Hóa Bộ Nhớ Đệm (Cache)</div>
-                        <span class="chip chip-green">In-Memory / Redis</span>
+                        <div class="panel-title">Tối Ưu Hóa Cache</div>
+                        <span class="chip chip-green">Redis In-Memory</span>
                     </div>
                     <p class="panel-desc">
-                        Cơ chế lưu trữ đệm dữ liệu RAM giải phóng tài nguyên CPU máy chủ và giảm thời gian phản hồi từ hàng giây xuống dưới 5ms.
+                        Cơ chế lưu đệm RAM giải phóng tài nguyên CPU máy chủ và giảm thời gian phản hồi API xuống dưới 5ms.
                     </p>
                 </div>
                 <div>
                     <div class="button-group">
-                        <button class="btn btn-success" id="btn-cache" onclick="testCache()">
-                            <span>🚀</span> Kiểm Tra Độ Trễ Phản Hồi
+                        <button class="btn btn-success" id="btn-cache" onclick="testCache()" style="width: 100%;">
+                            Kiểm Tra Độ Trễ Phản Hồi
                         </button>
                     </div>
                     <div class="terminal-box">
@@ -718,7 +739,7 @@ app.get('/', (req, res) => {
                                 <button class="btn-terminal-mini" onclick="clearBox('cache-result')">Clear</button>
                             </div>
                         </div>
-                        <div class="terminal-body" id="cache-result">Nhấn nút "Kiểm Tra Độ Trễ" bên trên để bắt đầu đo lường hiệu năng bộ nhớ đệm...</div>
+                        <div class="terminal-body" id="cache-result">Nhấn nút bên trên để bắt đầu đo lường hiệu năng bộ nhớ đệm...</div>
                     </div>
                 </div>
             </div>
@@ -727,20 +748,20 @@ app.get('/', (req, res) => {
             <div class="panel-card">
                 <div class="panel-top">
                     <div class="panel-header">
-                        <div class="panel-title">📊 Phân Tích Kế Hoạch Truy Vấn (Index)</div>
+                        <div class="panel-title">Tối Ưu Hóa Truy Vấn</div>
                         <span class="chip chip-purple">MariaDB 11.4 Engine</span>
                     </div>
                     <p class="panel-desc">
-                        Đánh giá kế hoạch thực thi truy vấn (Query Execution Plan) trên 50.000 bản ghi để kiểm chứng sự vượt trội của chỉ mục B-Tree.
+                        Đánh giá kế hoạch thực thi EXPLAIN trên 50.000 bản ghi để kiểm chứng sự vượt trội của chỉ mục B-Tree.
                     </p>
                 </div>
                 <div>
                     <div class="button-group">
-                        <button class="btn" id="btn-seed" onclick="seedDb()">
-                            <span>🌱</span> 1. Sinh 50.000 Dữ Liệu
+                        <button class="btn" id="btn-seed" onclick="seedDb()" style="flex: 1;">
+                            1. Sinh 50k Dữ Liệu
                         </button>
-                        <button class="btn btn-purple" id="btn-benchmark" onclick="benchmarkIndex()">
-                            <span>🔍</span> 2. Đo Kế Hoạch EXPLAIN
+                        <button class="btn btn-purple" id="btn-benchmark" onclick="benchmarkIndex()" style="flex: 1;">
+                            2. Đo Kế Hoạch EXPLAIN
                         </button>
                     </div>
                     <div class="terminal-box">
@@ -761,23 +782,23 @@ app.get('/', (req, res) => {
             </div>
 
             <!-- GIÁM SÁT HỆ THỐNG & TELEGRAM NOTIFICATION -->
-            <div class="panel-card full-width">
+            <div class="panel-card">
                 <div class="panel-top">
                     <div class="panel-header">
-                        <div class="panel-title">📡 Giám Sát Sức Khỏe Toàn Bộ Website & Bắn Báo Cáo Telegram</div>
-                        <span class="chip chip-green">Telegram Bot Integrated</span>
+                        <div class="panel-title">Giám Sát & Báo Cáo</div>
+                        <span class="chip chip-green">Telegram Bot</span>
                     </div>
                     <p class="panel-desc">
-                        Tự động ping kiểm tra trạng thái HTTP và đo độ trễ mạng của cả 3 website vệ tinh (HTML, PHP E-Commerce, Next.js StudyNode) cùng Cổng quản trị Node.js, sau đó tự động biên soạn và bắn bản tin báo cáo tức thì về Telegram Bot của bạn.
+                        Ping tự động kiểm tra trạng thái HTTP 3 website vệ tinh và cổng Node.js, biên soạn và gửi báo cáo về Telegram Bot.
                     </p>
                 </div>
                 <div>
                     <div class="button-group">
-                        <button class="btn btn-success" id="btn-health-sites" onclick="checkAllSitesAndNotify()">
-                            <span>📲</span> Quét Sức Khỏe 3 Site & Gửi Báo Cáo Telegram
+                        <button class="btn btn-success" id="btn-health-sites" onclick="checkAllSitesAndNotify()" style="flex: 1.2;">
+                            Quét 3 Site & Gửi Báo Cáo
                         </button>
-                        <button class="btn" id="btn-health-internal" onclick="checkHealth()">
-                            <span>🩺</span> Kiểm Tra Cổng Nội Bộ (/health)
+                        <button class="btn" id="btn-health-internal" onclick="checkHealth()" style="flex: 0.8;">
+                            Cổng /health
                         </button>
                     </div>
                     <div class="terminal-box">
@@ -792,7 +813,7 @@ app.get('/', (req, res) => {
                                 <button class="btn-terminal-mini" onclick="clearBox('health-result')">Clear</button>
                             </div>
                         </div>
-                        <div class="terminal-body" id="health-result">Bấm nút "Quét Sức Khỏe 3 Site & Gửi Báo Cáo Telegram" để bắt đầu kiểm tra và nhận bản tin trực tiếp qua Telegram...</div>
+                        <div class="terminal-body" id="health-result">Nhấn nút bên trên để kiểm tra và nhận bản tin trực tiếp qua Telegram...</div>
                     </div>
                 </div>
             </div>
@@ -840,14 +861,14 @@ app.get('/', (req, res) => {
         function copyWebhook() {
             const url = document.getElementById('webhook-url').innerText;
             navigator.clipboard.writeText(url).then(() => {
-                showToast('✅ Đã sao chép GitHub Webhook URL!');
+                showToast('Đã sao chép GitHub Webhook URL');
             });
         }
 
         function copyBoxText(id) {
             const text = document.getElementById(id).innerText;
             navigator.clipboard.writeText(text).then(() => {
-                showToast('📋 Đã sao chép Terminal Log!');
+                showToast('Đã sao chép log');
             });
         }
 
@@ -857,7 +878,7 @@ app.get('/', (req, res) => {
             if (isLoading) {
                 btn.disabled = true;
                 btn.dataset.original = btn.innerHTML;
-                btn.innerHTML = '<span>⏳</span> Đang xử lý...';
+                btn.innerHTML = '<span class="spinner"></span> Đang xử lý...';
             } else {
                 btn.disabled = false;
                 btn.innerHTML = btn.dataset.original || originalHtml;
@@ -867,7 +888,7 @@ app.get('/', (req, res) => {
         async function testCache() {
             const box = document.getElementById('cache-result');
             setButtonLoading('btn-cache', true);
-            box.innerHTML = '⏳ Đang gửi yêu cầu đo lường thời gian phản hồi mạng...';
+            box.innerHTML = 'Đang gửi yêu cầu đo lường thời gian phản hồi mạng...';
             const t0 = performance.now();
             try {
                 const res = await fetch('/api/cache-test');
@@ -877,7 +898,7 @@ app.get('/', (req, res) => {
                 
                 const lines = [
                     '<span class="tag-pill ' + (isCached ? 'tag-pill-fast' : 'tag-pill-slow') + '">' +
-                    (isCached ? '⚡ PHẢN HỒI SIÊU TỐC TỪ CACHE' : '🐢 TRUY VẤN NẶNG TRỰC TIẾP') + '</span>',
+                    (isCached ? '[CACHE HIT] PHẢN HỒI TỪ RAM' : '[CACHE MISS] TRUY VẤN TRỰC TIẾP') + '</span>',
                     'Nguồn dữ liệu  : ' + data.source,
                     'Thời gian xử lý: ' + data.speed + ' (Độ trễ toàn trình: ' + totalMs + ' ms)',
                     'Trạng thái     : ' + data.note,
@@ -885,9 +906,9 @@ app.get('/', (req, res) => {
                     JSON.stringify(data.data, null, 2)
                 ];
                 box.innerHTML = lines.join(NL);
-                showToast('⚡ Hoàn thành đo cache (' + totalMs + 'ms)');
+                showToast('Hoàn thành đo cache (' + totalMs + ' ms)');
             } catch (err) {
-                box.innerHTML = '❌ Lỗi: ' + err.message;
+                box.innerHTML = '[LỖI] ' + err.message;
             } finally {
                 setButtonLoading('btn-cache', false);
             }
@@ -896,15 +917,15 @@ app.get('/', (req, res) => {
         async function seedDb() {
             const box = document.getElementById('index-result');
             setButtonLoading('btn-seed', true);
-            box.innerHTML = '⏳ Đang khởi tạo bảng và nạp 50.000 bản ghi dữ liệu mẫu... Vui lòng đợi 5-10 giây...';
+            box.innerHTML = 'Đang khởi tạo bảng và nạp 50.000 bản ghi dữ liệu mẫu... Vui lòng đợi 5-10 giây...';
             try {
                 const res = await fetch('/api/seed-db');
                 const data = await res.json();
                 if (data.error) throw new Error(data.error);
-                box.innerHTML = '✅ THÀNH CÔNG: ' + JSON.stringify(data, null, 2);
-                showToast('🌱 Đã nạp thành công 50.000 bản ghi!');
+                box.innerHTML = '[THÀNH CÔNG]: ' + JSON.stringify(data, null, 2);
+                showToast('Đã nạp thành công 50.000 bản ghi');
             } catch (err) {
-                box.innerHTML = '❌ Lỗi kết nối CSDL: ' + err.message;
+                box.innerHTML = '[LỖI KẾT NỐI]: ' + err.message;
             } finally {
                 setButtonLoading('btn-seed', false);
             }
@@ -913,7 +934,7 @@ app.get('/', (req, res) => {
         async function benchmarkIndex() {
             const box = document.getElementById('index-result');
             setButtonLoading('btn-benchmark', true);
-            box.innerHTML = '⏳ Đang phân tích kế hoạch thực thi EXPLAIN SELECT...';
+            box.innerHTML = 'Đang phân tích kế hoạch thực thi EXPLAIN SELECT...';
             try {
                 const res = await fetch('/api/index-benchmark?email=user45000@example.com');
                 const data = await res.json();
@@ -922,9 +943,9 @@ app.get('/', (req, res) => {
                 const isIndexed = data.explain_analysis.key_used !== 'NONE (Full Table Scan)';
                 
                 const lines = [
-                    '🎯 KẾT QUẢ PHÂN TÍCH HIỆU NĂNG TRUY VẤN:',
+                    'KẾT QUẢ PHÂN TÍCH HIỆU NĂNG TRUY VẤN:',
                     '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-                    'Trạng thái Index     : ' + (isIndexed ? '✅ ĐÃ CÓ CHỈ MỤC INDEX' : '⚠️ CHƯA CÓ INDEX (QUÉT TOÀN BẢNG)'),
+                    'Trạng thái Index     : ' + (isIndexed ? '[INDEXED] Đã có chỉ mục B-Tree' : '[UNINDEXED] Quét toàn bảng (Full Table Scan)'),
                     'Thời gian thực thi   : ' + data.executionTime,
                     'Loại truy cập (type) : ' + data.explain_analysis.type,
                     'Chỉ mục được dùng    : ' + data.explain_analysis.key_used,
@@ -933,9 +954,9 @@ app.get('/', (req, res) => {
                     'Dữ liệu tìm thấy: ' + JSON.stringify(data.data, null, 2)
                 ];
                 box.innerHTML = lines.join(NL);
-                showToast('🔍 Đã phân tích xong EXPLAIN!');
+                showToast('Đã phân tích xong EXPLAIN');
             } catch (err) {
-                box.innerHTML = '❌ Lỗi: ' + err.message + NL + '(Gợi ý: Hãy bấm nút "1. Sinh 50.000 Dữ Liệu" trước khi đo)';
+                box.innerHTML = '[LỖI]: ' + err.message + NL + '(Gợi ý: Hãy bấm nút "1. Sinh 50k Dữ Liệu" trước khi đo)';
             } finally {
                 setButtonLoading('btn-benchmark', false);
             }
@@ -944,31 +965,31 @@ app.get('/', (req, res) => {
         async function checkAllSitesAndNotify() {
             const box = document.getElementById("health-result");
             setButtonLoading('btn-health-sites', true);
-            box.innerHTML = "⏳ Đang đồng thời ping kiểm tra cả 3 trang web và tổng hợp số liệu... Vui lòng đợi...";
+            box.innerHTML = "Đang đồng thời ping kiểm tra cả 3 trang web và tổng hợp số liệu... Vui lòng đợi...";
             try {
                 const res = await fetch("/api/check-all-sites");
                 const data = await res.json();
                 
                 const lines = [
-                    "🎯 KẾT QUẢ QUÉT SỨC KHỎE CÁC WEBSITE TRÊN VPS:",
+                    "KẾT QUẢ QUÉT SỨC KHỎE CÁC WEBSITE TRÊN VPS:",
                     "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
                 ];
                 data.results.forEach((s, i) => {
-                    const icon = s.healthy ? "✅" : "❌";
-                    lines.push((i + 1) + ". " + icon + " [" + s.name + "]: HTTP " + s.status + " (" + s.statusText + ") | Độ trễ: " + s.latencyMs + " ms");
+                    const statusTag = s.healthy ? "[ONLINE]" : "[ERROR]";
+                    lines.push((i + 1) + ". " + statusTag + " [" + s.name + "]: HTTP " + s.status + " (" + s.statusText + ") | Độ trễ: " + s.latencyMs + " ms");
                     lines.push("   URL: " + s.url);
                 });
                 lines.push("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-                lines.push("📌 Tổng kết: " + data.summary);
+                lines.push("Tổng kết: " + data.summary);
                 if (data.telegramSent) {
-                    lines.push("🚀 [TELEGRAM]: ✅ Đã bắn bản tin báo cáo thành công về Telegram của bạn!");
-                    showToast('📲 Đã bắn báo cáo về Telegram!');
+                    lines.push("[TELEGRAM]: Báo cáo đã gửi thành công về Telegram của bạn.");
+                    showToast('Đã gửi báo cáo về Telegram Bot');
                 } else {
-                    lines.push("⚠️ [TELEGRAM]: Không gửi được tin nhắn (kiểm tra token/chat_id trong .env).");
+                    lines.push("[TELEGRAM]: Không gửi được tin nhắn (kiểm tra token/chat_id trong .env).");
                 }
                 box.innerHTML = lines.join(NL);
             } catch (err) {
-                box.innerHTML = "❌ Lỗi khi quét dịch vụ: " + err.message;
+                box.innerHTML = "[LỖI KHI QUÉT]: " + err.message;
             } finally {
                 setButtonLoading('btn-health-sites', false);
             }
@@ -979,10 +1000,10 @@ app.get('/', (req, res) => {
             try {
                 const res = await fetch('/health');
                 const data = await res.json();
-                box.innerHTML = '✅ HTTP 200 OK | Trạng thái dịch vụ:' + NL + JSON.stringify(data, null, 2);
-                showToast('🩺 Cổng nội bộ /health hoạt động tốt!');
+                box.innerHTML = 'HTTP 200 OK | Trạng thái dịch vụ:' + NL + JSON.stringify(data, null, 2);
+                showToast('Cổng nội bộ /health hoạt động tốt');
             } catch (err) {
-                box.innerHTML = '❌ Lỗi: ' + err.message;
+                box.innerHTML = '[LỖI]: ' + err.message;
             }
         }
     </script>
